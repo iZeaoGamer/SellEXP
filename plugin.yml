@@ -1,21 +1,19 @@
-name: Sell
+name: SellEXP
 api: [3.0.0-ALPHA10]
-main: SellHand\Main
-version: 1.0.0
-author: [Muqsit, JackMD]
-authors: [KairusDarkSeeker, JackMD]
-depend: EconomyAPI
+main: SellEXP\Main
+version: 0.0.1-ALPHA
+author: VMPE Development Team
 commands:
-  sell:
+  sellexp:
     description: "Sells the item in your hand or all of your inventory's contents"
-    permission: sell.command
+    permission: sellexp.command
 permissions:
-  sell:
-    default: op
+  sellexp:
+    default: true
     children:
-      sell.hand:
-        default: op
-      sell.all:
-        default: op
-      sell.command:
+      sellexp.amount:
+        default: true
+      sellexp.all:
+        default: true
+      sellexp.command:
         default: true
