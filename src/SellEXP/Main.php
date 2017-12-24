@@ -22,6 +22,7 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
+use pocketmine\inventory\PlayerInventory;
 use onebone\economyapi\EconomyAPI;
 
 class Main extends PluginBase implements Listener{
