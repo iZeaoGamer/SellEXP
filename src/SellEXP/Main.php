@@ -42,8 +42,8 @@ class Main extends PluginBase implements Listener{
 			}
 		}
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
-		$this->sell = new Config($this->getDataFolder() . "sellexp.yml", Config::YAML);
-		$this->messages = new Config($this->getDataFolder() . "xpmessages.yml", Config::YAML);
+		$this->sellexp = new Config($this->getDataFolder() . "sellexp.yml", Config::YAML);
+		$this->xpmessages = new Config($this->getDataFolder() . "xpmessages.yml", Config::YAML);
 	}
 
 	public function onDisable(){
