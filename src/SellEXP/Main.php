@@ -13,7 +13,7 @@
 * (at your option) any later version.
 */
 
-namespace SellHand;
+namespace SellEXP;
 
 use pocketmine\Player;
 use pocketmine\event\Listener;
@@ -32,15 +32,9 @@ class Main extends PluginBase implements Listener{
 
 	public function onEnable(){
     	$this->getLogger()->info(TF::GREEN.TF::BOLD."
-   _____      _ _ 
-  / ____|    | | |
- | (___   ___| | |
-  \___ \ / _ \ | |
-  ____) |  __/ | |
- |_____/ \___|_|_|
- Enabled Sell by Muqsit and JackMD.
+ Fully enabled, by VMPE Development Team
  		");
-		$files = array("sell.yml", "messages.yml");
+		$files = array("sellexp.yml", "xpmessages.yml");
 		foreach($files as $file){
 			if(!file_exists($this->getDataFolder() . $file)) {
 				@mkdir($this->getDataFolder());
@@ -48,8 +42,8 @@ class Main extends PluginBase implements Listener{
 			}
 		}
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
-		$this->sell = new Config($this->getDataFolder() . "sell.yml", Config::YAML);
-		$this->messages = new Config($this->getDataFolder() . "messages.yml", Config::YAML);
+		$this->sell = new Config($this->getDataFolder() . "sellexp.yml", Config::YAML);
+		$this->messages = new Config($this->getDataFolder() . "xpmessages.yml", Config::YAML);
 	}
 
 	public function onDisable(){
@@ -58,7 +52,7 @@ class Main extends PluginBase implements Listener{
 
 	public function onCommand(CommandSender $sender, Command $cmd, string $label, array $args): bool{
 		switch(strtolower($cmd->getName())){
-			case "sell":
+			case "sellexp":
 			// Checks if command is executed by console.
 			// It further solves the crash problem.
 			if(!($sender instanceof Player)){
@@ -68,43 +62,43 @@ class Main extends PluginBase implements Listener{
 			}
 
 				/* Check if the player is permitted to use the command */
-				if($sender->hasPermission("sell") || $sender->hasPermission("sell.hand") || $sender->hasPermission("sell.all")){
+				if($sender->hasPermission("sellexp") || $sender->hasPermission("sellexp.amount") || $sender->hasPermission("sellexp.all")){
 					/* Disallow non-survival mode abuse */
 					if(!$sender->isSurvival()){
 						$sender->sendMessage(TF::RED . TF::BOLD ."Error: ". TF::RESET . TF::DARK_RED ."Please switch back to survival mode.");
 						return false;
 					}
 					
-					/* Sell Hand */
-					if(isset($args[0]) && strtolower($args[0]) == "hand"){
-						if(!$sender->hasPermission("sell.hand")){
-							$error_handPermission = $this->messages->get("error-nopermission-sellHand");
+					/* SellEXP Hand */
+					if(isset($args[0]) && strtolower($args[0]) == "amount"){
+						if(!$sender->hasPermission("sellexp.amount")){
+							$error_handPermission = $this->messages->get("error-nopermission-sellEXPAmount");
 							$sender->sendMessage(TF::RED . TF::BOLD . "Error: " . TF::RESET . TF::RED . $error_handPermission);
 							return false;
 						}
-						$item = $sender->getInventory()->getItemInHand();
-						$itemId = $item->getId();
-						/* Check if the player is holding a block */
+						$XP = $sender->getInventory()->getXPAmount();
+						$XPId = $item->getXP();
+						/* Check if the player has EXP */
 						if($item->getId() === 0){
-							$sender->sendMessage(TF::RED . TF::BOLD ."Error: ". TF::RESET . TF::DARK_RED ."You aren't holding any blocks/items.");
+							$sender->sendMessage(TF::RED . TF::BOLD ."Error: ". TF::RESET . TF::DARK_RED ."You do not have any EXP.");
 							return false;
 						}
 						/* Recheck if the item the player is holding is a block */
-						if($this->sell->get($itemId) == null){
-							$sender->sendMessage(TF::RED . TF::BOLD ."Error: ". TF::RESET . TF::GREEN . $item->getName() . TF::DARK_RED ." cannot be sold.");
+						if($this->sell->get($XPAmount) == null){
+							$sender->sendMessage(TF::RED . TF::BOLD ."Error: ". TF::RESET . TF::GREEN . $XPAmount->getName() . TF::DARK_RED ." cannot be sold.");
 							return false;
 						}
 						/* Sell the item in the player's hand */
-						EconomyAPI::getInstance()->addMoney($sender, $this->sell->get($itemId) * $item->getCount());
-						$sender->getInventory()->removeItem($item);
-						$price = $this->sell->get($item->getId()) * $item->getCount();
+						EconomyAPI::getInstance()->addMoney($sender, $this->sell->get($XPAmount) * $XP->getCount());
+						$sender->getInventory()->removeEXP($XPAmount);
+						$price = $this->sell->get($XP->getInventory()) * $XP->getCount();
 						$sender->sendMessage(TF::GREEN . TF::BOLD . "(!) " . TF::RESET . TF::GREEN . "$" . $price . " has been added to your account.");
-						$sender->sendMessage(TF::GREEN . "Sold for " . TF::RED . "$" . $price . TF::GREEN . " (" . $item->getCount() . " " . $item->getName() . " at $" . $this->sell->get($itemId) . " each).");
+						$sender->sendMessage(TF::GREEN . "Sold for " . TF::RED . "$" . $price . TF::GREEN . " (" . $XP->getCount() . " " . $XP->getName() . " at $" . $this->sell->get($XPAmount) . " each).");
 
 					/* Sell All */
 					}elseif(isset($args[0]) && strtolower($args[0]) == "all"){
-						if(!$sender->hasPermission("sell.all")){
-							$error_allPermission = $this->messages->get("error-nopermission-sellAll");
+						if(!$sender->hasPermission("sellexp.all")){
+							$error_allPermission = $this->messages->get("error-nopermission-sellEXPAll");
 							$sender->sendMessage(TF::RED . TF::BOLD . "Error: " . TF::RESET . TF::RED . $error_allPermission);
 							return false;
 						}
@@ -118,11 +112,11 @@ class Main extends PluginBase implements Listener{
 							}
 						}
 					}elseif(isset($args[0]) && strtolower($args[0]) == "about"){
-						$sender->sendMessage(TF::RED . TF::BOLD . "(!) " . TF::RESET . TF::GRAY . "This server uses the plugin, Sell Hand, by Muqsit Rayyan and fixed by JackMD.");
+						$sender->sendMessage(TF::RED . TF::BOLD . "(!) " . TF::RESET . TF::GRAY . "This server uses the plugin, SellEXP, by VMPE Development Team");
 					}else{
 						$sender->sendMessage(TF::RED . TF::BOLD . "(!) " . TF::RESET . TF::DARK_RED . "Sell Online Market");
-						$sender->sendMessage(TF::RED . "- " . TF::DARK_RED . "/sell hand " . TF::GRAY . "- Sell the item that's in your hand.");
-						$sender->sendMessage(TF::RED . "- " . TF::DARK_RED . "/sell all " . TF::GRAY . "- Sell every possible thing in inventory.");
+						$sender->sendMessage(TF::RED . "- " . TF::DARK_RED . "/sellexp amount " . TF::GRAY . "- Sell the item that's in your hand.");
+						$sender->sendMessage(TF::RED . "- " . TF::DARK_RED . "/sellexp all " . TF::GRAY . "- Sell every possible thing in inventory.");
 						return true;
 					}
 				}else{
